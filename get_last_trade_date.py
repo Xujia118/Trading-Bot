@@ -1,11 +1,14 @@
-import alpaca_trade_api as tradeapi
-import config
+from alpaca.trading.client import TradingClient
+from alpaca.trading.requests import GetOrdersRequest
+from alpaca.trading.enums import QueryOrderStatus
 import pandas as pd
+import config
 
-api = tradeapi.REST(config.API_KEY, config.SECRET_KEY, base_url='https://paper-api.alpaca.markets')
+tc = TradingClient(config.API_KEY, config.SECRET_KEY, paper=True)
 
 def get_latest_order_date():   
-    orders = api.list_orders(status='all')
+    all_orders = GetOrdersRequest(status=QueryOrderStatus.ALL)
+    orders = tc.get_orders(filter=all_orders)
 
     order_date = {}
 
@@ -17,3 +20,4 @@ def get_latest_order_date():
 
     return order_date
 
+print(get_latest_order_date())
