@@ -6,9 +6,9 @@ from datetime import date
 import config
 
 def send_email():
-    # Call functions to get positions and buy plan for other stocks
-    position_df = decidePositions()  
-    buy_plan = decideCandidates() 
+    # Call functions to get plans for positions and other stocks
+    position_df = decidePositions()  # return a pandas frame
+    buy_plan = decideCandidates()   # return a list of tuples
 
     # Email configuration
     sender_email = config.sender_email
@@ -17,7 +17,7 @@ def send_email():
 
     # Formatting the report
     positions_df_str = position_df.to_string(index=False)
-    buy_plan_str = '\n'.join([f"Ticker: {ticker}, Shares: {shares}" for ticker, shares in buy_plan])
+    buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
 
     # Email content
     email_text = email_content.format(
