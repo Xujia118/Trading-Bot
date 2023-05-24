@@ -1,0 +1,6 @@
+API_KEY = 'PKYFTJU3F6A4ZF7N6N0S'
+SECRET_KEY = 'CYLg4uBKePY8mfLJXC0Nx4VYVyhyYRBeKpTY6Rbu'
+
+sender_email = 'xujia_python_2023@163.com'
+password = 'ZACZSFIUSHTIZJIR'
+
