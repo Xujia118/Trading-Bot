@@ -2,10 +2,14 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 from class_analysis_technical import Technical_analysis
+from _get_ticker_data import GetTickcerData
 
 start_date = '2020-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('VRTX', start_date)
+df = yf.download('AMZN', start_date)
+
+# df = GetTickcerData('AAPL', '2022-01-01')
+
 
 ta = Technical_analysis(df)
 
