@@ -15,8 +15,9 @@ def decideCandidates():
     for new_ticker, new_ticker_price in potential_buy:
         if available_equity / total_equity > 0.2:    
             new_quantity = total_equity * 0.2 // new_ticker_price
-            place = Order(new_ticker, new_quantity)
-            place.buy_order(new_ticker, new_quantity)  
+            if new_quantity > 0:
+                place = Order(new_ticker, new_quantity)
+                place.buy_order()  
 
             buy_plan.append((new_ticker, new_ticker_price, new_quantity))
              

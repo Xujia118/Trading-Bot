@@ -10,10 +10,10 @@ class Order:
         self.ticker = ticker
         self.quantity = quantity
       
-    def buy_order(self, ticker, quantity):
+    def buy_order(self):
         market_order_data = MarketOrderRequest(
-                            symbol = ticker,
-                            qty = quantity,
+                            symbol = self.ticker,
+                            qty = self.quantity,
                             type = 'market',
                             side = OrderSide.BUY,
                             time_in_force = TimeInForce.GTC
@@ -22,10 +22,10 @@ class Order:
         market_order = trading_client.submit_order(market_order_data)
    
     # 空了考虑stop loss的事情
-    def sell_order(self, ticker, quantity):
+    def sell_order(self):
         market_order_data = MarketOrderRequest(
-                            symbol = ticker,
-                            qty = quantity,
+                            symbol = self.ticker,
+                            qty = self.quantity,
                             type = 'market',
                             side = OrderSide.SELL,
                             # stop loss ??
