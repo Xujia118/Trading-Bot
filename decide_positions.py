@@ -32,9 +32,9 @@ def decidePositions():
     for i in range(len(position_df)):
         # Get commmon variables
         ticker = position_df.index[i]
-        holding_price = position_df['Holding price'].iloc[i]
-        holding_quantity = position_df['Quantity'].iloc[i]
-        cur_price = position_df['Last price'].iloc[i]
+        holding_price = float(position_df['Holding price'].iloc[i])
+        holding_quantity = int(position_df['Quantity'].iloc[i])
+        cur_price = float(position_df['Last price'].iloc[i])
         last_trade_date = position_df['Last order date'].iloc[i]
         
         # If we have a sell signal
@@ -67,4 +67,3 @@ def decidePositions():
                 place.buy_order(ticker, buy_quantity)
 
     return position_df
-
