@@ -7,8 +7,8 @@ import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
-    position_df = decidePositions()  # return a pandas frame
-    buy_plan = decideCandidates()   # return a list of tuples
+    position_sell, position_buy = decidePositions()  
+    buy_plan = decideCandidates() 
 
     # Email configuration
     sender_email = config.sender_email
@@ -16,13 +16,21 @@ def send_email():
     password = config.password
 
     # Formatting the report
-    positions_df_str = position_df.to_string(index=False)
+    if len(position_sell) == 0:
+        position_sell_plan = 'No sell plan for holding positions.'
+
+    if len(position_buy) == 0:
+        position_buy_plan = 'No buy plan for holding positions.'
+
+    position_sell_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {sell_quantity}' for ticker, sell_quantity in position_sell])
+    position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in position_buy])
     buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
 
     # Email content
     email_text = email_content.format(
-        positions_df=positions_df_str,
-        buy_plans=buy_plan_str,
+        position_sell = position_sell_plan,
+        position_buy = position_buy_plan,
+        buy_plans = buy_plan_str,
         date=date.today()
     )
 

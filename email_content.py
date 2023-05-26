@@ -1,8 +1,9 @@
 email_content = '''
 Stocks Report
 
-Stocks in positions:
-{positions_df}
+Positions plans:
+{position_sell}
+{position_buy}
 
 Buy plans:
 {buy_plans}

@@ -28,6 +28,7 @@ def decidePositions():
     # AMZN        118.35        3   None  116.250000      2023-05-18
 
     # Decide actions for positions.
+    position_sell, position_buy = [], []
     sells_left = 3
     for i in range(len(position_df)):
         # Get commmon variables
@@ -57,6 +58,8 @@ def decidePositions():
             sells_left -= 1
             if holding_quantity == 0:
                 sells_left = 3
+
+            position_sell.append((ticker, sell_quantity))
         
         # if we have a buy signal 
         if position_df['Action'].iloc[i] == "Buy": 
@@ -66,4 +69,8 @@ def decidePositions():
                 place = Order()
                 place.buy_order(ticker, buy_quantity)
 
-    return position_df
+                position_buy.append((ticker, buy_quantity))
+
+    return position_sell, position_buy
+
+# decidePositions()
