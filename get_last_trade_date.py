@@ -11,7 +11,6 @@ def get_latest_order_date():
     orders = tc.get_orders(filter=all_orders)
 
     order_date = {}
-
     for order in orders:
         if order.filled_at:
             filled_date = pd.Timestamp(order.filled_at).date()
@@ -19,5 +18,3 @@ def get_latest_order_date():
                 order_date[order.symbol] = filled_date
 
     return order_date
-
-print(get_latest_order_date())

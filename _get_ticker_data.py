@@ -4,7 +4,7 @@ from alpaca.data.timeframe import TimeFrame
 import pandas as pd
 import config
 
-def GetTickcerData(ticker, start):
+def get_tickcer_data(ticker, start):
     client = StockHistoricalDataClient(config.API_KEY, config.SECRET_KEY)
 
     request_params = StockBarsRequest(
@@ -20,9 +20,12 @@ def GetTickcerData(ticker, start):
     df.index = df.index.set_levels(pd.to_datetime(df.index.get_level_values('timestamp')), level='timestamp')
     df['date'] = df.index.get_level_values('timestamp').strftime('%Y-%m-%d')
     df = df[['open', 'high', 'low', 'close', 'date']]
-    df = df.rename(columns=lambda x:x.capitalize())
+    df = df.rename(columns=lambda x: x.capitalize())
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
 
     return df
 
+'''
+Alpaca API does not provide adjusted price. 
+'''

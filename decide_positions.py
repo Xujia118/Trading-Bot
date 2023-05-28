@@ -3,7 +3,7 @@ from get_last_trade_date import get_latest_order_date
 from class_order import Order
 import pandas as pd
 from datetime import date
-from parameters import total_equity
+import parameters
 
 def decidePositions():
     # Get positions information
@@ -42,7 +42,7 @@ def decidePositions():
         if position_df['Action'].iloc[i] == "Sell":             
             # Check selling conditions: ten days or 10% gain
             days_gone = (date.today() - last_trade_date).days
-            if days_gone < 10 or cur_price < holding_price * 1.1: 
+            if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
                 continue
 
             # calculate sell_quantity
@@ -64,7 +64,8 @@ def decidePositions():
         # if we have a buy signal 
         if position_df['Action'].iloc[i] == "Buy": 
             # Check if we are allowed to buy
-            if available_equity / total_equity > 0.2 and cur_price <= holding_price * 0.87:
+            if available_equity / parameters.total_equity > parameters.invest_ratio and \
+                cur_price <= holding_price * parameters.rebuy_tolerance:
                 buy_quantity = holding_quantity * 2
                 place = Order()
                 place.buy_order(ticker, buy_quantity)

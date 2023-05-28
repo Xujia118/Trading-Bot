@@ -10,8 +10,8 @@ def decideCandidates():
 
     frame = pd.read_csv('candidates_Nasdaq.csv')
     potential_buy = scanCandidates(frame)
-
     buy_plan = []
+
     for new_ticker, new_ticker_price in potential_buy:
         if available_equity / total_equity > 0.2:    
             new_quantity = total_equity * 0.2 // new_ticker_price

@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
-from parameters import boll_tolerance, small_candle_tolerance, consolidation_tolerance, SMA_tolerance
+import parameters
 
-class Technical_analysis:
+class TechnicalAnalysis:
     def __init__(self, df) -> None:
         self.df = df
-        self.boll_tolerance = boll_tolerance
-        self.small_candle_tolerance = small_candle_tolerance
-        self.consolidation_tolerance = consolidation_tolerance
-        self.SMA_tolerance = SMA_tolerance
+        self.boll_tolerance = parameters.boll_tolerance
+        self.small_candle_tolerance = parameters.small_candle_tolerance
+        self.consolidation_tolerance = parameters.consolidation_tolerance
+        self.SMA_tolerance = parameters.SMA_tolerance
 
     def SMA60(self): 
         # forbid buying if price is above SMA60

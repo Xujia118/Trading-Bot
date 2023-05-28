@@ -1,5 +1,5 @@
 import pandas as pd
-from class_analysis_technical import Technical_analysis
+from class_analysis_technical import TechnicalAnalysis
 from scan_account import scanAccount
 import yfinance as yf
 
@@ -14,11 +14,11 @@ def scanCandidates(frame):
         if ticker in positions:
             continue
 
-        # For other tickers, download historical data and run technical analysis for buy signals
+        # For other tickers, download data and run technical analysis for buy signals
         try:
             df = yf.download(ticker, start='2022-09-01')
-            print('Running technical analysis on', ticker)
-            ta = Technical_analysis(df)
+            print(f'Running technical analysis on {ticker}...')
+            ta = TechnicalAnalysis(df)
             ta.good_to_buy()
         except:
             continue
@@ -28,3 +28,4 @@ def scanCandidates(frame):
 
     return potential_buy
         
+# print(scanCandidates(frame))

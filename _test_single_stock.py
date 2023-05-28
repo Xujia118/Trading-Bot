@@ -1,15 +1,16 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from class_analysis_technical import Technical_analysis
+from class_analysis_technical import TechnicalAnalysis
+import parameters
 
-start_date = '2020-01-01'
+start_date = '2018-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('VRTX', start_date)
+df = yf.download('MMM', start_date)
 
-ta = Technical_analysis(df)
+ta = TechnicalAnalysis(df)
 
-def Trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
+def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
     ta.good_to_buy()
     ta.good_to_sell()
 
@@ -96,11 +97,11 @@ def Trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
                 
     return Buy_dates, Sell_dates, total_profit, equity
 
-equity = 10000
-invest_ratio = 0.2
-rebuy_tolerance = 0.87
-profit_threshold = 0.10
-Buy_dates, Sell_dates, total_profit, equity = Trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold)
+Buy_dates, Sell_dates, total_profit, equity = trade(df, 
+                                                    parameters.total_equity, 
+                                                    parameters.invest_ratio, 
+                                                    parameters.rebuy_tolerance, 
+                                                    parameters.profit_threshold)
 
 plt.scatter(df.loc[Buy_dates].index, df.loc[Buy_dates]['Close'], marker='^', c='g')
 plt.scatter(df.loc[Sell_dates].index, df.loc[Sell_dates]['Open'], marker='v', c='r')

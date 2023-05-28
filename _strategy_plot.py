@@ -1,17 +1,16 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from class_analysis_technical import Technical_analysis
-from _get_ticker_data import GetTickcerData
+from class_analysis_technical import TechnicalAnalysis
+from _get_ticker_data import get_tickcer_data
 
-start_date = '2020-01-01'
+start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('AMZN', start_date)
+df = yf.download('MAR', start_date)
 
-# df = GetTickcerData('AAPL', '2022-01-01')
+# df = get_tickcer_data('AMZN', '2020-01-01')
 
-
-ta = Technical_analysis(df)
+ta = TechnicalAnalysis(df)
 
 # ta.Bollinger() 
 # plt.plot(df[['Close', 'SMA20', 'Upper', 'Lower']])
