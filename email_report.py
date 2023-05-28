@@ -1,14 +1,14 @@
 import smtplib
 from email_content import email_content
-from decide_positions import decidePositions
-from decide_candidates import decideCandidates
+import module_decide_positions 
+import module_decide_candidates
 from datetime import date
 import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
-    position_sell, position_buy = decidePositions()  
-    buy_plan = decideCandidates() 
+    position_sell, position_buy = module_decide_positions.decide_positions()  
+    buy_plan = module_decide_candidates.decide_candidates() 
 
     # Email configuration
     sender_email = config.sender_email
