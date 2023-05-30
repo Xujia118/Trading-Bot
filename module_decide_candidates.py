@@ -1,3 +1,5 @@
+from alpaca.trading.client import TradingClient
+import config
 import module_scan_account
 import module_scan_candidates
 from module_order import Order
@@ -5,6 +7,14 @@ import pandas as pd
 from parameters import total_equity
 
 def decide_candidates():
+    # The bot would fire the same orders if yesterday was a holiday. 
+    # So if there are pending orders, do nothing. 
+    tc = TradingClient(config.API_KEY, config.SECRET_KEY, paper=True)
+
+    open_orders = tc.get_orders()
+    if len(open_orders) > 0:
+        return
+
     # Get available equity
     positions, num_positions, available_equity = module_scan_account.scan_account()
 
@@ -23,4 +33,4 @@ def decide_candidates():
              
     return buy_plan
 
-# print(decideCandidates())
+print(decide_candidates())
