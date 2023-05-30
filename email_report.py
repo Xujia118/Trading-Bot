@@ -26,7 +26,10 @@ def send_email():
     else:
         position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in position_buy])
 
-    buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
+    if len(buy_plan) == 0:
+        buy_plan_str = 'No buy plan for other stocks.'
+    else:
+        buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
 
     # Email content
     email_text = email_content.format(
