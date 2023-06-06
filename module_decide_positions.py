@@ -4,8 +4,9 @@ from module_order import Order
 import pandas as pd
 from datetime import date
 import parameters
+import json
 
-def decide_positions():
+def get_positions_summary():
     # Get positions information
     positions, num_positions, available_equity = module_scan_account.scan_account()
 
@@ -27,51 +28,90 @@ def decide_positions():
     # AAPL       173.105        2   None  175.160004      2023-05-15
     # AMZN        118.35        3   None  116.250000      2023-05-18
 
-    # Decide actions for positions.
-    position_sell, position_buy = [], []
-    sells_left = 3
+    return position_df, available_equity
+
+def decide_positions_actions():
+    position_df, available_equity = get_positions_summary()
+
     for i in range(len(position_df)):
-        # Get commmon variables
         ticker = position_df.index[i]
         holding_price = float(position_df['Holding price'].iloc[i])
         holding_quantity = int(position_df['Quantity'].iloc[i])
         cur_price = float(position_df['Last price'].iloc[i])
         last_trade_date = position_df['Last order date'].iloc[i]
-        
-        # If we have a sell signal
+
         if position_df['Action'].iloc[i] == "Sell":             
-            # Check selling conditions: ten days or 10% gain
-            days_gone = (date.today() - last_trade_date).days
-            if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
-                continue
-
-            # calculate sell_quantity
-            sell_quantity = holding_quantity // sells_left
-            remainder = holding_quantity - sell_quantity
-
-            # Place the order
-            place = Order()
-            place.sell_order(ticker, sell_quantity)
-
-            # Update quantity and sells left
-            holding_quantity = remainder
-            sells_left -= 1
-            if holding_quantity == 0:
-                sells_left = 3
-
-            position_sell.append((ticker, sell_quantity))
+            positions_sell = sell_positions_stocks(ticker, 
+                                 holding_price,
+                                 holding_quantity,
+                                 last_trade_date
+                                 )
         
-        # if we have a buy signal 
-        if position_df['Action'].iloc[i] == "Buy": 
-            # Check if we are allowed to buy
-            if available_equity / parameters.total_equity > parameters.invest_ratio and \
-                cur_price <= holding_price * parameters.rebuy_tolerance:
-                buy_quantity = holding_quantity * 2
-                place = Order()
-                place.buy_order(ticker, buy_quantity)
+        if position_df['Action'].iloc[i] == "Buy":          
+            positions_buy = buy_positions_stocks(ticker,
+                                 holding_price,
+                                 holding_quantity,
+                                 cur_price, 
+                                 available_equity              
+            )
 
-                position_buy.append((ticker, buy_quantity))
+        return positions_sell, positions_buy
+    
+def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
+    positions_sell = []
+    
+    # Check selling conditions: ten days or 10% gain
+    days_gone = (date.today() - last_trade_date).days
+    if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
+        return
+    
+    # Sell if quantity is too small
+    if holding_quantity <= 3:
+        place = Order()
+        place.sell_order(ticker, sell_quantity)    
+        return
 
-    return position_sell, position_buy
+    json_file = f'selling_{ticker}.json'
+    try:
+        with open(json_file, 'r') as file:
+            selling = json.load(file)
+    except FileNotFoundError:
+        selling = {}
 
-# decidePositions()
+    if ticker not in selling:
+        # Sell a third of holding quantity
+        sell_quantity = holding_quantity // 3
+
+        # Update 'selling'. The remaining shares of this ticker will be sold in two operations.
+        selling[ticker] = 2
+    else:      
+        if selling[ticker] == 2:
+            sell_quantity = holding_quantity // 2
+            selling[ticker] = 1
+        if selling[ticker] == 1:
+            sell_quantity = holding_quantity
+            del selling[ticker]
+    place = Order()
+    place.sell_order(ticker, sell_quantity)    
+
+    positions_sell.append((ticker, sell_quantity))
+    
+    return positions_sell
+
+def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_equity):
+
+    positions_buy = []    
+
+    # Check if we are allowed to buy
+    if available_equity / parameters.total_equity > parameters.invest_ratio and \
+        cur_price <= holding_price * parameters.rebuy_tolerance:    
+
+        buy_quantity = holding_quantity * 2
+        place = Order()
+        place.buy_order(ticker, buy_quantity)
+
+        positions_buy.append((ticker, buy_quantity))
+
+    return positions_buy
+
+decide_positions_actions()

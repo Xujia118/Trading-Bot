@@ -7,7 +7,7 @@ import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
-    position_sell, position_buy = module_decide_positions.decide_positions()  
+    positions_sell, positions_buy = module_decide_positions.decide_positions_actions()
     buy_plan = module_decide_candidates.decide_candidates() 
 
     # Email configuration
@@ -16,17 +16,17 @@ def send_email():
     password = config.password
 
     # Formatting the report
-    if len(position_sell) == 0:
+    if len(positions_sell) == 0:
         position_sell_plan = 'No sell plan for holding positions.'
     else:
         position_sell_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {sell_quantity}' for ticker, sell_quantity in position_sell])
 
-    if len(position_buy) == 0:
+    if len(positions_buy) == 0:
         position_buy_plan = 'No buy plan for holding positions.'
     else:
         position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in position_buy])
 
-    if len(buy_plan) == 0:
+    if not buy_plan:
         buy_plan_str = 'No buy plan for other stocks.'
     else:
         buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
