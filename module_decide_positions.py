@@ -44,39 +44,39 @@ def decide_positions_actions():
         last_trade_date = position_df['Last order date'].iloc[i]
 
         if position_df['Action'].iloc[i] == "Sell":             
-            positions_sell.extend(sell_positions_stocks(ticker, 
+            sell = sell_positions_stocks(ticker, 
                                  holding_price,
                                  holding_quantity,
                                  cur_price,
-                                 last_trade_date
-            ))
+                                 last_trade_date)
+            if sell:
+                positions_sell.append(sell)
         
         if position_df['Action'].iloc[i] == "Buy":          
-            positions_buy.extend(buy_positions_stocks(ticker,
+            buy = buy_positions_stocks(ticker,
                                  holding_price,
                                  holding_quantity,
                                  cur_price, 
                                  available_equity,
-                                 num_positions              
-            ))
+                                 num_positions)           
+            if buy:
+                positions_buy.append(buy)
 
     return positions_sell, positions_buy
     
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
-    positions_sell = []
-    
     # Check selling conditions: ten days or 10% gain
     days_gone = (date.today() - last_trade_date).days
     if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
-        return positions_sell
+        return
     
     # Sell if quantity is too small
     if holding_quantity <= 3:
         place = Order()
         place.sell_order(ticker, sell_quantity)    
-        positions_sell.append((ticker, sell_quantity))
-        return positions_sell
-
+        sell_result = (ticker, sell_quantity)
+        return sell_result
+        
     json_file = f'selling_{ticker}.json'
     try:
         with open(json_file, 'r') as file:
@@ -99,31 +99,27 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
             del selling[ticker]
             os.remove(json_file)
     place = Order()
-    place.sell_order(ticker, sell_quantity)    
-    positions_sell.append((ticker, sell_quantity))
+    place.sell_order(ticker, sell_quantity)  
+    sell_result = (ticker, sell_quantity)
     
     if selling:
         with open(json_file, 'w') as file:
             json.dump(selling, file)
  
-    return positions_sell
+    return sell_result
 
 def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_equity, num_positions):
-
-    positions_buy = []    
-
     # Check if we are allowed to buy
     if available_equity / parameters.total_equity < parameters.invest_ratio or \
-        cur_price > holding_price * parameters.rebuy_tolerance or \
-        num_positions >= 3:
-        return positions_buy 
+        cur_price > holding_price * parameters.rebuy_tolerance:
+        # num_positions >= 3: not use it for the sake of testing
+        return
 
     buy_quantity = holding_quantity * 2
     place = Order()
     place.buy_order(ticker, buy_quantity)
 
-    positions_buy.append((ticker, buy_quantity))
+    buy_result = (ticker, buy_quantity)
+    return buy_result
 
-    return positions_buy
-
-decide_positions_actions()
+# print(decide_positions_actions())

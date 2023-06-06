@@ -19,12 +19,12 @@ def send_email():
     if len(positions_sell) == 0:
         position_sell_plan = 'No sell plan for holding positions.'
     else:
-        position_sell_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {sell_quantity}' for ticker, sell_quantity in position_sell])
+        position_sell_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {sell_quantity}' for ticker, sell_quantity in positions_sell])
 
     if len(positions_buy) == 0:
         position_buy_plan = 'No buy plan for holding positions.'
     else:
-        position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in position_buy])
+        position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in positions_buy])
 
     if not buy_plan:
         buy_plan_str = 'No buy plan for other stocks.'
