@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import date
 import parameters
 import json
+import os
 
 def get_positions_summary():
     # Get positions information
@@ -27,11 +28,13 @@ def get_positions_summary():
     # Holding price Quantity Action  Last price Last order date
     # AAPL       173.105        2   None  175.160004      2023-05-15
     # AMZN        118.35        3   None  116.250000      2023-05-18
-
-    return position_df, available_equity
+    
+    return position_df, available_equity, num_positions
 
 def decide_positions_actions():
-    position_df, available_equity = get_positions_summary()
+    position_df, available_equity, num_positions = get_positions_summary()
+
+    positions_sell, positions_buy = [], []
 
     for i in range(len(position_df)):
         ticker = position_df.index[i]
@@ -41,21 +44,23 @@ def decide_positions_actions():
         last_trade_date = position_df['Last order date'].iloc[i]
 
         if position_df['Action'].iloc[i] == "Sell":             
-            positions_sell = sell_positions_stocks(ticker, 
+            positions_sell.extend(sell_positions_stocks(ticker, 
                                  holding_price,
                                  holding_quantity,
+                                 cur_price,
                                  last_trade_date
-                                 )
+            ))
         
         if position_df['Action'].iloc[i] == "Buy":          
-            positions_buy = buy_positions_stocks(ticker,
+            positions_buy.extend(buy_positions_stocks(ticker,
                                  holding_price,
                                  holding_quantity,
                                  cur_price, 
-                                 available_equity              
-            )
+                                 available_equity,
+                                 num_positions              
+            ))
 
-        return positions_sell, positions_buy
+    return positions_sell, positions_buy
     
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
     positions_sell = []
@@ -63,13 +68,14 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
     # Check selling conditions: ten days or 10% gain
     days_gone = (date.today() - last_trade_date).days
     if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
-        return
+        return positions_sell
     
     # Sell if quantity is too small
     if holding_quantity <= 3:
         place = Order()
         place.sell_order(ticker, sell_quantity)    
-        return
+        positions_sell.append((ticker, sell_quantity))
+        return positions_sell
 
     json_file = f'selling_{ticker}.json'
     try:
@@ -87,30 +93,36 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
     else:      
         if selling[ticker] == 2:
             sell_quantity = holding_quantity // 2
-            selling[ticker] = 1
-        if selling[ticker] == 1:
+            selling[ticker] -= 1
+        else:
             sell_quantity = holding_quantity
             del selling[ticker]
+            os.remove(json_file)
     place = Order()
     place.sell_order(ticker, sell_quantity)    
-
     positions_sell.append((ticker, sell_quantity))
     
+    if selling:
+        with open(json_file, 'w') as file:
+            json.dump(selling, file)
+ 
     return positions_sell
 
-def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_equity):
+def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_equity, num_positions):
 
     positions_buy = []    
 
     # Check if we are allowed to buy
-    if available_equity / parameters.total_equity > parameters.invest_ratio and \
-        cur_price <= holding_price * parameters.rebuy_tolerance:    
+    if available_equity / parameters.total_equity < parameters.invest_ratio or \
+        cur_price > holding_price * parameters.rebuy_tolerance or \
+        num_positions >= 3:
+        return positions_buy 
 
-        buy_quantity = holding_quantity * 2
-        place = Order()
-        place.buy_order(ticker, buy_quantity)
+    buy_quantity = holding_quantity * 2
+    place = Order()
+    place.buy_order(ticker, buy_quantity)
 
-        positions_buy.append((ticker, buy_quantity))
+    positions_buy.append((ticker, buy_quantity))
 
     return positions_buy
 
