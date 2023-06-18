@@ -65,7 +65,7 @@ def decide_positions_actions():
     return positions_sell, positions_buy
     
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
-    # Check selling conditions: ten days or 10% gain
+    # Check selling conditions: ten days + 10% gain
     days_gone = (date.today() - last_trade_date).days
     if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
         return
@@ -76,7 +76,8 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
         place.sell_order(ticker, sell_quantity)    
         sell_result = (ticker, sell_quantity)
         return sell_result
-        
+    
+    # Sell in three operations
     json_file = f'selling_{ticker}.json'
     try:
         with open(json_file, 'r') as file:
@@ -98,8 +99,9 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
             sell_quantity = holding_quantity
             del selling[ticker]
             os.remove(json_file)
-    place = Order()
-    place.sell_order(ticker, sell_quantity)  
+
+    place = Order(ticker, sell_quantity)
+    place.sell_order()  
     sell_result = (ticker, sell_quantity)
     
     if selling:
@@ -112,14 +114,14 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     # Check if we are allowed to buy
     if available_equity / parameters.total_equity < parameters.invest_ratio or \
         cur_price > holding_price * parameters.rebuy_tolerance:
-        # num_positions >= 3: not use it for the sake of testing
+        # num_positions >= 3: not to use it for more frequent testing
         return
 
     buy_quantity = holding_quantity * 2
-    place = Order()
-    place.buy_order(ticker, buy_quantity)
+    place = Order(ticker, buy_quantity)
+    place.buy_order()
 
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-# print(decide_positions_actions())
+print(decide_positions_actions())

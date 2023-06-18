@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from module_technical_analysis import TechnicalAnalysis
 import parameters
 
-start_date = '2018-01-01'
+start_date = '2022-03-05'
 start_date = pd.to_datetime(start_date)
-df = yf.download('MMM', start_date)
+df = yf.download('AAPL', start_date)
 
 ta = TechnicalAnalysis(df)
 
@@ -73,7 +73,7 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
             
             gain = (sell_price - holding_price) * sell_quantity
             trade_profit += gain
-            print('减仓价格、数量', sell_price, sell_quantity)
+            print('Sold price/quantity', sell_price, sell_quantity)
 
             # Update
             holding_quantity = remainder
@@ -83,9 +83,9 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
                 attempt = 0
                 open_pos = []
                 total_profit += trade_profit
-                print('这笔赚了', trade_profit)
+                print('This trade made', trade_profit)
                 equity += trade_profit 
-                print('这时账户变成了', equity)           
+                print('Now the account has', equity)           
                 trade_profit = 0
                 gain = 0
                 loss = 0
