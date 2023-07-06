@@ -17,9 +17,10 @@ def scan_account():
         holding_positions[symbol] = [holding_price, holding_quantity]
         num_positions = len(holding_positions)
     
-    available_equity = float(tc.get_account().cash)
+    available_cash = float(tc.get_account().cash)
+    total_equity = float(tc.get_account().portfolio_value)
 
-    return holding_positions, num_positions, available_equity
+    return holding_positions, num_positions, available_cash, total_equity
 
 def run_ta(holding_positions): 
     

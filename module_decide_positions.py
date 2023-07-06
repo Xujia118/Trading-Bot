@@ -9,7 +9,7 @@ import os
 
 def get_positions_summary():
     # Get positions information
-    positions, num_positions, available_equity = module_scan_account.scan_account()
+    positions, num_positions, available_cash, total_equity = module_scan_account.scan_account()
 
     # Run technical analysis on all holding tickers
     analysis_result = module_scan_account.run_ta(positions)
@@ -29,10 +29,10 @@ def get_positions_summary():
     # AAPL       173.105        2   None  175.160004      2023-05-15
     # AMZN        118.35        3   None  116.250000      2023-05-18
     
-    return position_df, available_equity, num_positions
+    return position_df, available_cash, num_positions
 
 def decide_positions_actions():
-    position_df, available_equity, num_positions = get_positions_summary()
+    position_df, available_cash, num_positions = get_positions_summary()
 
     positions_sell, positions_buy = [], []
 
@@ -57,7 +57,7 @@ def decide_positions_actions():
                                  holding_price,
                                  holding_quantity,
                                  cur_price, 
-                                 available_equity,
+                                 available_cash,
                                  num_positions)           
             if buy:
                 positions_buy.append(buy)
@@ -110,9 +110,9 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
  
     return sell_result
 
-def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_equity, num_positions):
+def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_cash, num_positions):
     # Check if we are allowed to buy
-    if available_equity / parameters.total_equity < parameters.invest_ratio or \
+    if available_cash / parameters.total_equity < parameters.invest_ratio or \
         cur_price > holding_price * parameters.rebuy_tolerance:
         # num_positions >= 3: not to use it for more frequent testing
         return
@@ -124,4 +124,4 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-print(decide_positions_actions())
+# print(decide_positions_actions())
