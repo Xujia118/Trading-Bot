@@ -72,9 +72,9 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
     
     # Sell if quantity is too small
     if holding_quantity <= 3:
-        place = Order()
-        place.sell_order(ticker, sell_quantity)    
-        sell_result = (ticker, sell_quantity)
+        place = Order(ticker, holding_quantity)
+        place.sell_order()    
+        sell_result = (ticker, holding_quantity)
         return sell_result
     
     # Sell in three operations
@@ -124,4 +124,4 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-# print(decide_positions_actions())
+print(decide_positions_actions())
