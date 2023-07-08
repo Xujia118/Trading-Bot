@@ -6,7 +6,7 @@ import yfinance as yf
 frame = pd.read_csv('candidates_Nasdaq.csv')
 
 def scan_candidates(frame):
-    positions, _, _ = module_scan_account.scan_account()
+    positions, _, _, _ = module_scan_account.scan_account()
 
     potential_buy = []
     for ticker in frame['symbol']:
@@ -28,4 +28,4 @@ def scan_candidates(frame):
 
     return potential_buy
         
-# print(scanCandidates(frame))
+# print(scan_candidates(frame))

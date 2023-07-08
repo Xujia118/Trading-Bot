@@ -44,4 +44,6 @@ def run_ta(holding_positions):
             analysis_result[ticker] = (None, close_price)
     
     return analysis_result
+
+# print(scan_account())
                         
