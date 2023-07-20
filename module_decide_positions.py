@@ -65,10 +65,11 @@ def decide_positions_actions():
     return positions_sell, positions_buy
     
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
-    # Check selling conditions: ten days + 10% gain
+    # Check selling conditions: ten days or 10% gain
     days_gone = (date.today() - last_trade_date).days
-    if days_gone < 10 or cur_price < holding_price * (1 + parameters.profit_threshold): 
+    if days_gone < 5 or cur_price < holding_price * (1 + parameters.profit_threshold): 
         return
+    # 暂时改成5天，10天有点太长了，还是落袋为安比较好。
     
     # Sell if quantity is too small
     if holding_quantity <= 3:
@@ -124,4 +125,4 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-# print(decide_positions_actions())
+print(decide_positions_actions())
