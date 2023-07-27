@@ -12,7 +12,7 @@ def send_email():
 
     # Email configuration
     sender_email = config.sender_email
-    receiver_email = '773977192@qq.com'
+    receiver_email = 'jia.dustborne@gmail.com'
     password = config.password
 
     # Formatting the report
@@ -40,9 +40,12 @@ def send_email():
     )
 
     email_text = f'Subject: Stocks Report\n\n{email_text}'
+    print(email_text)
 
-    with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, email_text)
+    # 下面的邮箱暂时用不来
+    # with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
+    #     server.login(sender_email, password)
+    #     server.sendmail(sender_email, receiver_email, email_text)
 
-send_email()
+if __name__ == '__main__':
+    send_email()

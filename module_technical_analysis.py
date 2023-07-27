@@ -45,7 +45,7 @@ class TechnicalAnalysis:
         bearish_engulf = (self.df['Open'] * (1 + self.consolidation_tolerance) >= np.maximum(yesterday_df['Open'], yesterday_df['Close'])) & \
                         (self.df['Close'] * (1 - self.consolidation_tolerance) <= np.minimum(yesterday_df['Open'], yesterday_df['Close']))
 
-        # Flag consolidation with a bearish candle today
+        # Flag
         flag = (yesterday_df['High'] * (1 + self.consolidation_tolerance) >= np.maximum(self.df['Open'], self.df['Close'])) & \
                     (yesterday_df['Low'] * (1 - self.consolidation_tolerance) <= np.minimum(self.df['Open'], self.df['Close'])) 
         
@@ -56,19 +56,20 @@ class TechnicalAnalysis:
     def buy_consolidation(self):
         yesterday_df = self.df.shift(1, fill_value=0)
         
-        today_small_candle = (abs(self.df['Open'] - self.df['Close']) <= self.small_candle_tolerance * self.df['Open']) #& \
-                                    #self.df['Close'] > self.df['Open']
+        # today_small_candle = (abs(self.df['Open'] - self.df['Close']) <= self.small_candle_tolerance * self.df['Open']) #& \
+        #                             #self.df['Close'] > self.df['Open']
+
+        today_bullish_candle = self.df['Close'] >= self.df['Open']                              
         
         # Bullish engulf
         bullish_engulf = (self.df['Close'] * (1 + self.consolidation_tolerance) >= np.maximum(yesterday_df['Open'], yesterday_df['Close'])) & \
                         (self.df['Open'] * (1 - self.consolidation_tolerance) <= np.minimum(yesterday_df['Open'], yesterday_df['Close']))
         
-        # Flag 最后一个蜡烛应该是bullish，否则也许还继续跌，特别是在下跌行情中
+        # Flag
         flag = (yesterday_df['High'] * (1 + self.consolidation_tolerance) >= np.maximum(self.df['Open'], self.df['Close'])) & \
                     (yesterday_df['Low'] * (1 - self.consolidation_tolerance) <= np.minimum(self.df['Open'], self.df['Close'])) 
     
-
-        self.df['buy_consolidation'] = bullish_engulf | (flag & today_small_candle)
+        self.df['buy_consolidation'] = bullish_engulf | (flag & today_bullish_candle)
 
         return self.df
 
