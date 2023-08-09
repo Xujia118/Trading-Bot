@@ -20,12 +20,13 @@ def scan_candidates(frame):
             print(f'Running technical analysis on {ticker}...')
             ta = TechnicalAnalysis(df)
             ta.good_to_buy()
+            
+            if df['good_to_buy'][-1] == True:
+                potential_buy.append((ticker, df['Close'][-1]))
+
         except:
             continue
 
-        if df['good_to_buy'][-1] == True:
-            potential_buy.append((ticker, df['Close'][-1]))
-
     return potential_buy
         
-# print(scan_candidates(frame))
+print(scan_candidates(frame))
