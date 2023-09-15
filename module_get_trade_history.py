@@ -22,11 +22,10 @@ def get_latest_order_date():
 def get_pending_orders():
     # Get pending orders
     open_orders = GetOrdersRequest(status=QueryOrderStatus.OPEN)
+    
+    # Pending_orders is a list. A class object is at index 0 in this list.
     pending_orders = tc.get_orders(filter=open_orders)
     inside = pending_orders[0] 
-
-    # Pending_orders is a list
-    # A class object is at index 0 inside this class 
     ticker = inside.symbol
     quantity = inside.qty
     

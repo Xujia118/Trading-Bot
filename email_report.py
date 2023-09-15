@@ -5,9 +5,6 @@ import module_decide_candidates
 from datetime import date
 import config
 
-
-
-
 def send_email():
     # Call functions to get plans for positions and other stocks
     positions_sell, positions_buy = module_decide_positions.decide_positions_actions()
