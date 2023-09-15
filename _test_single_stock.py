@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 from module_technical_analysis import TechnicalAnalysis
 import parameters
 
-start_date = '2022-03-05'
+start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('AAPL', start_date)
+# df = yf.download('FANG', start_date)
+df = yf.download('600837.ss', start='2020-01-01')
 
 ta = TechnicalAnalysis(df)
 
@@ -64,7 +65,7 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
             
             # Check selling conditions: ten days or 10% gain
             days_gone = (cur_date.date() - last_trade_date.date()).days
-            if days_gone < 10 or cur_price < holding_price * (1 + profit_threshold): 
+            if days_gone < 5 or cur_price < holding_price * (1 + profit_threshold): 
                 continue
             
             Sell_dates.append(sell_date)               

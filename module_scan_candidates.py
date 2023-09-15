@@ -29,4 +29,4 @@ def scan_candidates(frame):
 
     return potential_buy
         
-print(scan_candidates(frame))
+# print(scan_candidates(frame))
