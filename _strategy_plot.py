@@ -6,7 +6,7 @@ from _get_ticker_data import get_tickcer_data
 
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('MAR', start_date)
+df = yf.download('600837.ss', start='2020-01-01')
 
 # df = get_tickcer_data('AMZN', '2020-01-01')
 
@@ -20,9 +20,7 @@ ta = TechnicalAnalysis(df)
 # plt.legend(['Close', 'SMA20', 'Upper', 'Lower'])
 
 # ta.SMA120()
-# print(df.tail(120))
 # plt.plot(df[['Close', 'SMA120']])
-# plt.show()
 
 # ta.buy_consolidation()
 # ta.sell_consolidation()
@@ -39,7 +37,6 @@ ta.good_to_sell()
 
 # print(df['good_to_buy'].value_counts())
 # print(df['good_to_sell'].value_counts())
-
 # print(df.loc['2022-09-29'])
 
 plt.scatter(df.index[df['good_to_buy']], df[df['good_to_buy']]['Close'], marker='^', c='g')

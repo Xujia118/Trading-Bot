@@ -1,18 +1,18 @@
 import smtplib
 from email_content import email_content
-import module_decide_positions 
-import module_decide_candidates
+import decide_positions 
+import decide_candidates
 from datetime import date
 import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
-    positions_sell, positions_buy = module_decide_positions.decide_positions_actions()
-    buy_plan = module_decide_candidates.decide_candidates() 
+    positions_sell, positions_buy = decide_positions.decide_positions_actions()
+    buy_plan = decide_candidates.decide_candidates() 
 
     # Email configuration
     sender_email = config.sender_email
-    receiver_email = 'jia.dustborne@gmail.com'
+    receiver_email = '773977192@qq.com'
     password = config.password
 
     # Formatting the report
@@ -26,7 +26,7 @@ def send_email():
     else:
         position_buy_plan = '\n'.join([f'Ticker: {ticker}, Quantity: {buy_quantity}' for ticker, buy_quantity in positions_buy])
 
-    if not buy_plan:
+    if len(buy_plan) == 0:
         buy_plan_str = 'No buy plan for other stocks.'
     else:
         buy_plan_str = '\n'.join([f"Ticker: {ticker}, Quantity: {quantity}" for ticker, price, quantity in buy_plan])    
@@ -42,10 +42,9 @@ def send_email():
     email_text = f'Subject: Stocks Report\n\n{email_text}'
     print(email_text)
 
-    # 下面的邮箱暂时用不来
-    # with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
-    #     server.login(sender_email, password)
-    #     server.sendmail(sender_email, receiver_email, email_text)
+    with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
+        server.login(sender_email, password)
+        # server.sendmail(sender_email, receiver_email, email_text)
 
 if __name__ == '__main__':
     send_email()

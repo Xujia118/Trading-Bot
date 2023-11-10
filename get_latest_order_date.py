@@ -18,3 +18,22 @@ def get_latest_order_date():
                 order_date[order.symbol] = filled_date
 
     return order_date
+
+def get_pending_orders():
+    # Get pending orders
+    open_orders = GetOrdersRequest(status=QueryOrderStatus.OPEN)
+    
+    # Pending_orders is a list. A class object is at index 0 in this list.
+    pending_orders = tc.get_orders(filter=open_orders)
+    
+    if not pending_orders:
+        return "0", 0
+
+    inside = pending_orders[0] 
+    ticker = inside.symbol
+    quantity = inside.qty
+    
+    return ticker, quantity
+
+# print(get_pending_orders())
+# get_latest_order_date()

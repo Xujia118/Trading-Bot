@@ -21,7 +21,7 @@ class Order:
 
         market_order = trading_client.submit_order(market_order_data)
    
-    # 空了考虑stop loss的事情
+    # Think about stop loss later
     def sell_order(self):
         market_order_data = MarketOrderRequest(
                             symbol = self.ticker,
