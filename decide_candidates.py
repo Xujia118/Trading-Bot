@@ -1,18 +1,18 @@
-import module_scan_account
-import module_scan_candidates
-import module_get_trade_history
-from module_order import Order
+import scan_account
+import scan_candidates
+import get_latest_order_date
+from _order import Order
 import pandas as pd
 
-pending_ticker, pending_qty = module_get_trade_history.get_pending_orders()
+pending_ticker, pending_qty = get_latest_order_date.get_pending_orders()
 
 def decide_candidates():
 
     # Get available equity
-    positions, num_positions, available_cash, total_equity = module_scan_account.scan_account()
+    positions, num_positions, available_cash, total_equity = scan_account.scan_account()
 
     frame = pd.read_csv('candidates_Nasdaq.csv')
-    potential_buy = module_scan_candidates.scan_candidates(frame)
+    potential_buy = scan_candidates.scan_candidates(frame)
     buy_plan = []
 
     for new_ticker, new_ticker_price in potential_buy:

@@ -25,6 +25,10 @@ def get_pending_orders():
     
     # Pending_orders is a list. A class object is at index 0 in this list.
     pending_orders = tc.get_orders(filter=open_orders)
+    
+    if not pending_orders:
+        return "0", 0
+
     inside = pending_orders[0] 
     ticker = inside.symbol
     quantity = inside.qty

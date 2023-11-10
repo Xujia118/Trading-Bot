@@ -1,14 +1,14 @@
 import smtplib
 from email_content import email_content
-import module_decide_positions 
-import module_decide_candidates
+import decide_positions 
+import decide_candidates
 from datetime import date
 import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
-    positions_sell, positions_buy = module_decide_positions.decide_positions_actions()
-    buy_plan = module_decide_candidates.decide_candidates() 
+    positions_sell, positions_buy = decide_positions.decide_positions_actions()
+    buy_plan = decide_candidates.decide_candidates() 
 
     # Email configuration
     sender_email = config.sender_email
@@ -44,7 +44,7 @@ def send_email():
 
     with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, email_text)
+        # server.sendmail(sender_email, receiver_email, email_text)
 
 if __name__ == '__main__':
     send_email()

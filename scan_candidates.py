@@ -1,12 +1,12 @@
 import pandas as pd
-from module_technical_analysis import TechnicalAnalysis
-import module_scan_account
+from _technical_analysis import TechnicalAnalysis
+import scan_account
 import yfinance as yf
 
 frame = pd.read_csv('candidates_Nasdaq.csv')
 
 def scan_candidates(frame):
-    positions, _, _, _ = module_scan_account.scan_account()
+    positions, _, _, _ = scan_account.scan_account()
 
     potential_buy = []
     for ticker in frame['symbol']:
