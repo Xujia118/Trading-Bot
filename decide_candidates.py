@@ -4,9 +4,10 @@ import get_latest_order_date
 from _order import Order
 import pandas as pd
 
-pending_ticker, pending_qty = get_latest_order_date.get_pending_orders()
-
 def decide_candidates():
+    # Get pending orders if there are any
+    # It's a dictionary: {'FTNT': '411', 'FANG': '132', 'CSCO': '397'}
+    pending_orders = get_latest_order_date.get_pending_orders()
 
     # Get available equity
     positions, num_positions, available_cash, total_equity = scan_account.scan_account()
@@ -16,17 +17,16 @@ def decide_candidates():
     buy_plan = []
 
     for new_ticker, new_ticker_price in potential_buy:
-        if available_cash / total_equity > 0.2:    
+        if new_ticker in pending_orders:
+            continue
+        
+        if available_cash / total_equity > 0.4:    
             new_quantity = total_equity * 0.2 // new_ticker_price
             if new_quantity > 0:
                 place = Order(new_ticker, new_quantity)
-
-                # Avoid repeating filing the same order as yesterday.
-                if new_quantity != pending_qty and new_ticker != pending_ticker:
-                    place.buy_order()  
-
-            buy_plan.append((new_ticker, new_ticker_price, new_quantity))
+                place.buy_order()  
+                buy_plan.append((new_ticker, new_ticker_price, new_quantity))
              
     return buy_plan
 
-# print(decide_candidates())
+print(decide_candidates())
