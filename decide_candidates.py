@@ -20,7 +20,7 @@ def decide_candidates():
         if new_ticker in pending_orders:
             continue
         
-        if available_cash / total_equity > 0.4:    
+        if available_cash / total_equity > 0.2:    
             new_quantity = total_equity * 0.2 // new_ticker_price
             if new_quantity > 0:
                 place = Order(new_ticker, new_quantity)
@@ -29,4 +29,4 @@ def decide_candidates():
              
     return buy_plan
 
-print(decide_candidates())
+# print(decide_candidates())

@@ -7,8 +7,6 @@ import parameters
 import json
 import os
 
-pending_ticker, pending_qty = get_latest_order_date.get_pending_orders()
-
 def get_positions_summary():
     # Get positions information
     positions, num_positions, available_cash, total_equity = scan_account.scan_account()
@@ -66,6 +64,9 @@ def decide_positions_actions():
 
     return positions_sell, positions_buy
     
+
+pending_orders = get_latest_order_date.get_pending_orders()
+
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
     # Check selling conditions: ten days or 10% gain
     days_gone = (date.today() - last_trade_date).days
@@ -78,7 +79,7 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
         place = Order(ticker, holding_quantity)
 
         # Avoid repeating filing the same order as yesterday.
-        if holding_quantity != pending_qty and ticker != pending_ticker:
+        if ticker not in pending_orders:
             place.sell_order()    
             sell_result = (ticker, holding_quantity)
             return sell_result
@@ -109,7 +110,7 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
     place = Order(ticker, sell_quantity)
 
     # Avoid repeating filing the same order as yesterday.
-    if holding_quantity != pending_qty and ticker != pending_ticker:
+    if ticker not in pending_orders:
         place.sell_order()  
         sell_result = (ticker, sell_quantity)
         
@@ -130,7 +131,7 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     place = Order(ticker, buy_quantity)
 
     # Avoid repeating filing the same order as yesterday.
-    if holding_quantity != pending_qty and ticker != pending_ticker:
+    if ticker not in pending_orders:
         place.buy_order()
 
     buy_result = (ticker, buy_quantity)
