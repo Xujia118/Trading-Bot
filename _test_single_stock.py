@@ -7,7 +7,7 @@ import parameters
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
 # df = yf.download('FANG', start_date)
-df = yf.download('ADSK', start='2020-01-01')
+df = yf.download('GILD', start='2020-01-01')
 
 ta = TechnicalAnalysis(df)
 
@@ -21,7 +21,7 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
     total_profit = 0
     open_pos = [] # [('price1', 'quantity1', 'date1')]
     attempt = 0
-    sells_left = 3
+    sells_left = 2
 
     for i in range(len(df) - 1):    
         cur_price = df['Close'].iloc[i]
@@ -65,7 +65,7 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
             
             # Check selling conditions: ten days or 10% gain
             days_gone = (cur_date.date() - last_trade_date.date()).days
-            if days_gone < 5 or cur_price < holding_price * (1 + profit_threshold): 
+            if days_gone < 3 or cur_price < holding_price * (1 + profit_threshold): 
                 continue
             
             Sell_dates.append(sell_date)               
@@ -90,7 +90,7 @@ def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
                 trade_profit = 0
                 gain = 0
                 loss = 0
-                sells_left = 3
+                sells_left = 2
                 continue
             else:          
                 last_trade_date = df.index[i + 1]

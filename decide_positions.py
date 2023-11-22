@@ -93,19 +93,17 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
         selling = {}
 
     if ticker not in selling:
-        # Sell a third of holding quantity
-        sell_quantity = holding_quantity // 3
-
-        # Update 'selling'. The remaining shares of this ticker will be sold in two operations.
-        selling[ticker] = 2
+        # Sell half of holding quantity
+        sell_quantity = holding_quantity // 2
+        selling[ticker] = 1
     else:      
-        if selling[ticker] == 2:
-            sell_quantity = holding_quantity // 2
-            selling[ticker] -= 1
-        else:
-            sell_quantity = holding_quantity
-            del selling[ticker]
-            os.remove(json_file)
+        # if selling[ticker] == 2:
+        #     sell_quantity = holding_quantity // 2
+        #     selling[ticker] -= 1
+        # else:
+        sell_quantity = holding_quantity
+        del selling[ticker]
+        os.remove(json_file)
 
     place = Order(ticker, sell_quantity)
 
