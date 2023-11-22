@@ -70,7 +70,7 @@ pending_orders = get_latest_order_date.get_pending_orders()
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
     # Check selling conditions: ten days or 10% gain
     days_gone = (date.today() - last_trade_date).days
-    if days_gone < 5 or cur_price < holding_price * (1 + parameters.profit_threshold): 
+    if days_gone < 3 or cur_price < holding_price * (1 + parameters.profit_threshold): 
         return
     # 暂时改成5天，10天有点太长了，还是落袋为安比较好。
     
