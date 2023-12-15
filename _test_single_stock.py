@@ -7,7 +7,7 @@ import parameters
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
 # df = yf.download('FANG', start_date)
-df = yf.download('GILD', start='2020-01-01')
+df = yf.download('GILD', start='2022-05-25')
 
 ta = TechnicalAnalysis(df)
 
