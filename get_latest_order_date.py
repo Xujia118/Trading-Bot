@@ -25,15 +25,19 @@ def get_pending_orders():
     
     # Pending_orders is a list. A class object is at index 0 in this list.
     pending_orders = tc.get_orders(filter=open_orders)
-    
-    if not pending_orders:
-        return "0", 0
 
-    inside = pending_orders[0] 
-    ticker = inside.symbol
-    quantity = inside.qty
+    if not pending_orders:
+        return {}
     
-    return ticker, quantity
+    result = {}
+    for order in pending_orders:
+        ticker = order.symbol
+        quantity = order.qty
+        if ticker not in result:
+            result[ticker] = 0
+        result[ticker] = quantity
+        
+    return result
 
 # print(get_pending_orders())
 # get_latest_order_date()
