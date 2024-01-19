@@ -123,4 +123,4 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-print(decide_positions_actions())
+# print(decide_positions_actions())

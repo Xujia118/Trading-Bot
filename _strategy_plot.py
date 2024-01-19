@@ -6,7 +6,7 @@ from _get_ticker_data import get_tickcer_data
 
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('GILD', start='2023-01-01')
+df = yf.download('FTNT', start='2023-01-01')
 
 # df = get_tickcer_data('AMZN', '2020-01-01')
 
