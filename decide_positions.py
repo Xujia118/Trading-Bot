@@ -7,35 +7,28 @@ import parameters
 import json
 import os
 
-pending_ticker, pending_qty = get_latest_order_date.get_pending_orders()
-
 def get_positions_summary():
     # Get positions information
     positions, num_positions, available_cash, total_equity = scan_account.scan_account()
 
     # Run technical analysis on all holding tickers
     analysis_result = scan_account.run_ta(positions)
-
-    # Get latest order date (used in sell)
-    latest_order = get_latest_order_date.get_latest_order_date()
     
     # Combine info into a new data frame.
     df1 = pd.DataFrame.from_dict(positions, orient='index', columns=['Holding price', 'Quantity'])
     df2 = pd.DataFrame.from_dict(analysis_result, orient='index', columns=['Action', 'Last price'])
-    df3 = pd.DataFrame.from_dict(latest_order, orient='index', columns=['Last order date'])
 
     position_df = pd.merge(df1, df2, left_index=True, right_index=True)
-    position_df = pd.merge(position_df, df3, left_index=True, right_index=True)
         
-    # Holding price Quantity Action  Last price Last order date
-    # AAPL       173.105        2   None  175.160004      2023-05-15
-    # AMZN        118.35        3   None  116.250000      2023-05-18
+    #       Holding price  Quantity Action  Last price
+    # BIIB     277.386282        78   None  256.540009
+    # CSCO      52.500000       398   None   49.439999
+    # EBAY      44.389204       490   None   42.650002
     
     return position_df, available_cash, num_positions
 
 def decide_positions_actions():
     position_df, available_cash, num_positions = get_positions_summary()
-
     positions_sell, positions_buy = [], []
 
     for i in range(len(position_df)):
@@ -43,14 +36,12 @@ def decide_positions_actions():
         holding_price = float(position_df['Holding price'].iloc[i])
         holding_quantity = int(position_df['Quantity'].iloc[i])
         cur_price = float(position_df['Last price'].iloc[i])
-        last_trade_date = position_df['Last order date'].iloc[i]
 
         if position_df['Action'].iloc[i] == "Sell":             
             sell = sell_positions_stocks(ticker, 
                                  holding_price,
                                  holding_quantity,
-                                 cur_price,
-                                 last_trade_date)
+                                 cur_price)
             if sell:
                 positions_sell.append(sell)
         
@@ -64,26 +55,26 @@ def decide_positions_actions():
             if buy:
                 positions_buy.append(buy)
 
-    return positions_sell, positions_buy
-    
-def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, last_trade_date):
-    # Check selling conditions: ten days or 10% gain
-    days_gone = (date.today() - last_trade_date).days
-    if days_gone < 5 or cur_price < holding_price * (1 + parameters.profit_threshold): 
+    return positions_sell, positions_buy    
+
+pending_orders = get_latest_order_date.get_pending_orders()
+
+def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price):
+    # Not sell if profit target is not hit
+    if cur_price < holding_price * (1 + parameters.profit_target): 
         return
-    # 暂时改成5天，10天有点太长了，还是落袋为安比较好。
     
-    # Sell if quantity is too small
+    # Sell all if quantity is too small
     if holding_quantity <= 3:
         place = Order(ticker, holding_quantity)
 
         # Avoid repeating filing the same order as yesterday.
-        if holding_quantity != pending_qty and ticker != pending_ticker:
+        if ticker not in pending_orders:
             place.sell_order()    
             sell_result = (ticker, holding_quantity)
             return sell_result
     
-    # Sell in three operations
+    # Sell in two operations
     json_file = f'selling_{ticker}.json'
     try:
         with open(json_file, 'r') as file:
@@ -92,31 +83,27 @@ def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price, la
         selling = {}
 
     if ticker not in selling:
-        # Sell a third of holding quantity
-        sell_quantity = holding_quantity // 3
-
-        # Update 'selling'. The remaining shares of this ticker will be sold in two operations.
-        selling[ticker] = 2
+        # Sell half of holding quantity
+        sell_quantity = holding_quantity // 2
+        selling[ticker] = 1
     else:      
-        if selling[ticker] == 2:
-            sell_quantity = holding_quantity // 2
-            selling[ticker] -= 1
-        else:
-            sell_quantity = holding_quantity
-            del selling[ticker]
-            os.remove(json_file)
+        sell_quantity = holding_quantity
+        del selling[ticker]
+        os.remove(json_file)
 
     place = Order(ticker, sell_quantity)
 
     # Avoid repeating filing the same order as yesterday.
-    if holding_quantity != pending_qty and ticker != pending_ticker:
-        place.sell_order()  
-        sell_result = (ticker, sell_quantity)
-        
+    if ticker in pending_orders:
+        return 
+
+    place.sell_order()  
+    sell_result = (ticker, sell_quantity)
+            
     if selling:
         with open(json_file, 'w') as file:
             json.dump(selling, file)
- 
+    
     return sell_result
 
 def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_cash, num_positions):
@@ -130,7 +117,7 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     place = Order(ticker, buy_quantity)
 
     # Avoid repeating filing the same order as yesterday.
-    if holding_quantity != pending_qty and ticker != pending_ticker:
+    if ticker not in pending_orders:
         place.buy_order()
 
     buy_result = (ticker, buy_quantity)

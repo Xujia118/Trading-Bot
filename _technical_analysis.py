@@ -17,7 +17,7 @@ class TechnicalAnalysis:
         return self.df
 
     def SMA120(self):   
-        # forbig buying if a large portion of close is under SMA120
+        # forbig buying if a large portion of close for the past quarter is under SMA120
         self.df['SMA120'] = self.df['Close'].rolling(window=120).mean()
         self.df['above_SMA120'] = np.where(self.df['Close'] > self.df['SMA120'], True, False)      
         self.df['check_SMA120'] = self.df['above_SMA120'].rolling(window=120).sum() / 120
@@ -34,31 +34,19 @@ class TechnicalAnalysis:
         return self.df
     
     def sell_consolidation(self):
-        yesterday_df = self.df.shift(1, fill_value=0)    
+        yesterday_df = self.df.shift(1, fill_value=0)   
 
-        # today_small_bearish_candle = (abs(self.df['Open'] - self.df['Close']) <= self.small_candle_tolerance * self.df['Open']) & \
-        #                             self.df['Close'] <= self.df['Open']
-
-        today_bearish_candle = self.df['Close'] <= self.df['Open']
-
-        # Bearish engulf
-        bearish_engulf = (self.df['Open'] * (1 + self.consolidation_tolerance) >= np.maximum(yesterday_df['Open'], yesterday_df['Close'])) & \
-                        (self.df['Close'] * (1 - self.consolidation_tolerance) <= np.minimum(yesterday_df['Open'], yesterday_df['Close']))
-
-        # Flag
-        flag = (yesterday_df['High'] * (1 + self.consolidation_tolerance) >= np.maximum(self.df['Open'], self.df['Close'])) & \
-                    (yesterday_df['Low'] * (1 - self.consolidation_tolerance) <= np.minimum(self.df['Open'], self.df['Close'])) 
+        # today's close breaks down yesterday's lowest and today is bearish
+        # That means we don't leave in consolidation, but only leave at break-down.
+        today_bearish = self.df['Close'] < self.df['Open']
+        bearish_break_down = self.df['Close'] < yesterday_df['Low']
         
-        self.df['sell_consolidation'] = bearish_engulf | (flag & today_bearish_candle)                                  
-
+        self.df['sell_consolidation'] = today_bearish & bearish_break_down                              
         return self.df
     
     def buy_consolidation(self):
         yesterday_df = self.df.shift(1, fill_value=0)
         
-        # today_small_candle = (abs(self.df['Open'] - self.df['Close']) <= self.small_candle_tolerance * self.df['Open']) #& \
-        #                             #self.df['Close'] > self.df['Open']
-
         today_bullish_candle = self.df['Close'] >= self.df['Open']                              
         
         # Bullish engulf
