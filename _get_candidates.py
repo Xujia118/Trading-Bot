@@ -7,3 +7,4 @@ filt = (df['trailingEps'] >= 0) & \
 df = df.loc[filt]
 
 df.to_csv('candidates_Nasdaq.csv')
+print('Candidates updated. Go to go for the next quater.')

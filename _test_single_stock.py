@@ -102,7 +102,7 @@ Buy_dates, Sell_dates, total_profit, equity = trade(df,
                                                     parameters.total_equity, 
                                                     parameters.invest_ratio, 
                                                     parameters.rebuy_tolerance, 
-                                                    parameters.profit_threshold)
+                                                    parameters.profit_target)
 
 plt.scatter(df.loc[Buy_dates].index, df.loc[Buy_dates]['Close'], marker='^', c='g')
 plt.scatter(df.loc[Sell_dates].index, df.loc[Sell_dates]['Open'], marker='v', c='r')
