@@ -34,11 +34,11 @@ def run_ta(holding_positions):
         ta.good_to_buy()
         ta.good_to_sell()
 
-        close_price = df['Close'][-1]
+        close_price = df.iloc[-1]['Close']
 
-        if df['good_to_buy'][-1] == True:
+        if df.iloc[-1]['good_to_buy'] == True:
             analysis_result[ticker] = ('Buy', close_price)
-        elif df['good_to_sell'][-1] == True:
+        elif df.iloc[-1]['good_to_sell'] == True:
             analysis_result[ticker] = ('Sell', close_price)
         else:
             analysis_result[ticker] = (None, close_price)
