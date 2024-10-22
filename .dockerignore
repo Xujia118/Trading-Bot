@@ -1,0 +1,16 @@
+# Ignore Python cache files
+__pycache__
+*.pyc
+*.pyo
+
+# Ignore environment files
+.env
+*.db
+*.log
+
+# Ignore version control directories
+.git
+.gitignore
+
+# Ignore any temporary files or directories
+tmp/
