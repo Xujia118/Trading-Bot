@@ -1,5 +1,5 @@
 from alpaca.trading.client import TradingClient
-from _technical_analysis import TechnicalAnalysis
+from technical_analysis import TechnicalAnalysis
 import yfinance as yf
 import config
 

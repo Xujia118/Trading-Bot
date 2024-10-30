@@ -1,5 +1,5 @@
 import pandas as pd
-from _technical_analysis import TechnicalAnalysis
+from technical_analysis import TechnicalAnalysis
 import scan_account
 import yfinance as yf
 
