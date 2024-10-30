@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from _technical_analysis import TechnicalAnalysis
+from technical_analysis import TechnicalAnalysis
 import parameters
 
 start_date = '2022-01-01'

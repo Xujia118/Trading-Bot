@@ -1,0 +1,14 @@
+Group by tasks:
+establish stocks bases
+run technical analysis (including test)
+decide trading actions
+place order
+report
+
+Integrate ML: to be included in technical analysis
+1. can we buy this stock?
+2. how much money can we make?
+3. is there a better way to use money?
+
+Start refactoring technical analysis. Add ML.
+Then OOP the rest
