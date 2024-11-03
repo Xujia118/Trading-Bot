@@ -1,9 +1,6 @@
-from alpaca.trading.client import TradingClient
-from technical_analysis import TechnicalAnalysis
 import yfinance as yf
-import config
-
-tc = TradingClient(config.API_KEY, config.SECRET_KEY)
+from technical_analysis import TechnicalAnalysis
+from client import tc
 
 def scan_account():
     open_positions = tc.get_all_positions()

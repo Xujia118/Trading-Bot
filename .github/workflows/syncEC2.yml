@@ -30,10 +30,10 @@ jobs:
           IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
           echo "EC2_HOST=$IP_ADDRESS" >> $GITHUB_ENV
 
-      # - name: Set up SSH
-      #   uses: webfactory/ssh-agent@v0.5.3
-      #   with: 
-      #     ssh-private-key: ${{ secrets.EC2_KEY }}
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with: 
+          ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: Deploy to EC2
         env:

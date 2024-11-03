@@ -1,10 +1,7 @@
-from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetOrdersRequest
 from alpaca.trading.enums import QueryOrderStatus
 import pandas as pd
-import config
-
-tc = TradingClient(config.API_KEY, config.SECRET_KEY, paper=True)
+from client import tc
 
 def get_latest_order_date():   
     all_orders = GetOrdersRequest(status=QueryOrderStatus.ALL)

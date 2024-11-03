@@ -1,9 +1,6 @@
-from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
-import config
-
-trading_client = TradingClient(config.API_KEY, config.SECRET_KEY)
+from client import tc
 
 class Order:
     def __init__(self, ticker, quantity):
@@ -19,7 +16,7 @@ class Order:
                             time_in_force = TimeInForce.GTC
                         )
 
-        market_order = trading_client.submit_order(market_order_data)
+        market_order = tc.submit_order(market_order_data)
    
     # Think about stop loss later
     def sell_order(self):
@@ -32,5 +29,5 @@ class Order:
                             time_in_force = TimeInForce.GTC
                         )
 
-        market_order = trading_client.submit_order(market_order_data)
+        market_order = tc.submit_order(market_order_data)
         

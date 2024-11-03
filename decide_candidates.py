@@ -1,7 +1,7 @@
 import scan_account
 import scan_candidates
 import get_latest_order_date
-from _order import Order
+from order import Order
 import pandas as pd
 
 def decide_candidates():
