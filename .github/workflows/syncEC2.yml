@@ -20,14 +20,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-west-2
 
+        # Retrieve the instance ID from S3
+      - name: Retrieve EC2 instance ID from S3
+        id: get-instance-id
+        run: | 
+            aws s3 cp s3://stocks-trading-bucket/ec2-instance-id.txt .
+            EC2_INSTANCE_ID=$(cat ec2-instance-id.txt)
+            echo "EC2_INSTANCE_ID=${EC2_INSTANCE_ID}" >> $GITHUB_ENV
+
+        # Start the instance and get the IP address
         # The following code requires an existing instance, so it has an id. 
         # The instance can be stopped, but it must exist or the code wont' work.
       - name: Start EC2 instance and get IP address
         id: start-instance
         run: |
-          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }} 
+          aws ec2 start-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} 
           sleep 20 # Wait for instance to start
-          IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
+          IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
           echo "EC2_HOST=$IP_ADDRESS" >> $GITHUB_ENV
 
       - name: Set up SSH
