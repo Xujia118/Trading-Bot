@@ -35,7 +35,6 @@ jobs:
         id: start-instance
         run: |
           aws ec2 start-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} 
-          sleep 20 # Wait for instance to start
           IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
           echo "EC2_HOST=$IP_ADDRESS" >> $GITHUB_ENV
 
