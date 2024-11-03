@@ -41,5 +41,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -p 22 ubuntu@$EC2_HOST << EOF
             cd /home/ubuntu/Trading-Bot 
+
+            # Configure Git to trust this directory
+            git config --global --add safe.directory /home/ubuntu/Trading-Bo
+            
             git pull origin main
           EOF
