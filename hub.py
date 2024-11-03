@@ -15,3 +15,5 @@ API_KEY, SECRET_KEY = config.API_KEY, config.SECRET_KEY
 tc = TradingClient(API_KEY, SECRET_KEY, paper=True)
 ta = TechnicalAnalysis(pd.DataFrame())
 client = StockHistoricalDataClient(API_KEY, SECRET_KEY)
+
+# Try push
