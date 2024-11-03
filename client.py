@@ -6,4 +6,5 @@ import os
 import config
 API_KEY, SECRET_KEY = config.API_KEY, config.SECRET_KEY
 
+# Other files can import this
 tc = TradingClient(API_KEY, SECRET_KEY, paper=True)
