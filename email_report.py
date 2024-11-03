@@ -3,8 +3,8 @@ from email_content import email_content
 import decide_positions 
 import decide_candidates
 from datetime import date
-# import config
 import os
+# import config
 
 def send_email():
     # Call functions to get plans for positions and other stocks
@@ -12,9 +12,9 @@ def send_email():
     buy_plan = decide_candidates.decide_candidates() 
 
     # Email configuration
-    sender_email = config.sender_email
+    sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = '773977192@qq.com'
-    password = config.password
+    password = os.getenv("PASSWORD")
 
     # Formatting the report
     if len(positions_sell) == 0:
