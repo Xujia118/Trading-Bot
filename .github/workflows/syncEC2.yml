@@ -40,6 +40,6 @@ jobs:
           EC2_HOST: ${{ env.EC2_HOST }} # public ip address
         run: |
           ssh -o StrictHostKeyChecking=no -p 22 ubuntu@$EC2_HOST << EOF
-            cd /home/ubuntu/testflow 
+            cd /home/ubuntu/Trading-Bot 
             git pull origin main
           EOF
