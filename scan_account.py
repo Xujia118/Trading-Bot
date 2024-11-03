@@ -1,6 +1,7 @@
 import yfinance as yf
 from technical_analysis import TechnicalAnalysis
 from hub import tc
+# I deliberately changed here!!!
 
 def scan_account():
     open_positions = tc.get_all_positions()
