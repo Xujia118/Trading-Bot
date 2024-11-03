@@ -1,6 +1,14 @@
 import yfinance as yf
 from technical_analysis import TechnicalAnalysis
-from client import tc
+import yfinance as yf
+import os
+
+# import config
+# API_KEY, SECRET_KEY = config.API_KEY, config.SECRET_KEY
+# tc = TradingClient(config.API_KEY, config.SECRET_KEY)
+
+API_KEY, SECRET_KEY = os.getenv("API_KEY"), os.getenv("SECRET_KEY")
+tc = TradingClient(API_KEY, SECRET_KEY)
 
 def scan_account():
     open_positions = tc.get_all_positions()

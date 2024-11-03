@@ -1,6 +1,6 @@
 from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
-from client import tc
+from hub import tc
 
 class Order:
     def __init__(self, ticker, quantity):

@@ -1,15 +1,13 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from technical_analysis import TechnicalAnalysis
 import parameters
+from hub import ta
 
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
 # df = yf.download('FANG', start_date)
 df = yf.download('GILD', start='2022-05-25')
-
-ta = TechnicalAnalysis(df)
 
 def trade(df, equity, invest_ratio, rebuy_tolerance, profit_threshold):
     ta.good_to_buy()
