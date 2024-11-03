@@ -43,7 +43,7 @@ jobs:
             cd /home/ubuntu/Trading-Bot 
 
             # Configure Git to trust this directory
-            git config --global --add safe.directory /home/ubuntu/Trading-Bo
+            git config --global --add safe.directory /home/ubuntu/Trading-Bot
             
             git pull origin main
           EOF
