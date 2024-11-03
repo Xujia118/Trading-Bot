@@ -3,7 +3,8 @@ from email_content import email_content
 import decide_positions 
 import decide_candidates
 from datetime import date
-import config
+# import config
+import os
 
 def send_email():
     # Call functions to get plans for positions and other stocks
