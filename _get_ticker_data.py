@@ -1,11 +1,9 @@
-from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
 import pandas as pd
-import config
+from hub import client
 
 def get_tickcer_data(ticker, start):
-    client = StockHistoricalDataClient(config.API_KEY, config.SECRET_KEY)
 
     request_params = StockBarsRequest(
         symbol_or_symbols=[ticker],
