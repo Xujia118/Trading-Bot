@@ -20,18 +20,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-west-2
 
+        # The following code requires an existing instance, so it has an id. 
+        # The instance can be stopped, but it must exist or the code wont' work.
       - name: Start EC2 instance and get IP address
         id: start-instance
         run: |
-          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }} 
           sleep 20 # Wait for instance to start
           IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
           echo "EC2_HOST=$IP_ADDRESS" >> $GITHUB_ENV
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
-        # with: 
-        #   ssh-private-key: ${{ secrets.EC2_KEY }}
+        with: 
+          ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: Deploy to EC2
         env:
