@@ -17,4 +17,9 @@ jobs:
 
       - name: Run Docker container with secrets
         run: |
-          sudo docker run -e API_KEY=${{ secrets.API_KEY }} -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e SENDER_EMAIL=${{ secrets.SENDER_EMAIL }} -e PASSWORD=${{ secrets.PASSWORD }} us_stocks_robot
+          sudo docker run \
+            -e "API_KEY=${{ secrets.API_KEY }}" \
+            -e "SECRET_KEY=${{ secrets.SECRET_KEY }}" \
+            -e "SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}" \
+            -e "PASSWORD=${{ secrets.PASSWORD }}" \
+            us_stocks_robot
