@@ -1,12 +1,12 @@
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
-from _get_ticker_data import get_tickcer_data
+# from _get_ticker_data import get_tickcer_data
 from hub import ta
 
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
-df = yf.download('FTNT', start='2024-01-01')
+df = yf.download('AMZN', start='2020-01-01')
 
 # df = get_tickcer_data('AMZN', '2020-01-01')
 
@@ -29,7 +29,7 @@ df = yf.download('FTNT', start='2024-01-01')
 # my_date = '2021-10-13'
 # print(df['Small_candle'].loc[my_date])
 # print(df['Bullish_engulf'].loc[my_date])
-
+ta.set_df(df)
 ta.good_to_buy()
 ta.good_to_sell()
 

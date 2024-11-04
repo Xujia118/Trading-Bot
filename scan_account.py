@@ -1,6 +1,6 @@
 import yfinance as yf
 from technical_analysis import TechnicalAnalysis
-from hub import tc
+from hub import tc, ta
 # I deliberately changed here!!!
 
 def scan_account():
@@ -28,7 +28,8 @@ def run_ta(holding_positions):
         df = yf.download(ticker, start='2022-09-01')
         
         print(f'Running technical analysis on {ticker}...')
-        ta = TechnicalAnalysis(df)
+        # ta = TechnicalAnalysis(df)
+        ta.set_df(df)
         ta.good_to_buy()
         ta.good_to_sell()
 

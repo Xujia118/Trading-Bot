@@ -9,6 +9,9 @@ class TechnicalAnalysis:
         self.small_candle_tolerance = parameters.small_candle_tolerance
         self.consolidation_tolerance = parameters.consolidation_tolerance
         self.SMA_tolerance = parameters.SMA_tolerance
+    
+    def set_df(self, df):
+        self.df = df
 
     def SMA60(self): 
         # forbid buying if price is above SMA60
