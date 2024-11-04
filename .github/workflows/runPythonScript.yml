@@ -9,17 +9,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build Docker image
-      run: sudo docker build -t us_stocks_robot .
+      - name: Build Docker image
+        run: sudo docker build -t us_stocks_robot .
 
-    - name: Run Docker container with secrets
-      run: |
-        sudo docker run \
-          -e API_KEY=${{ secrets.API_KEY }} \
-          -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          -e SENDER_EMAIL=${{ secrets.SENDER_EMAIL }} \
-          -e PASSWORD=${{ secrets.PASSWORD }} \
-          --name us_stocks_robot us_stocks_robot
+      - name: Run Docker container with secrets
+        run: |
+          sudo docker run \
+            -e API_KEY=${{ secrets.API_KEY }} \
+            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            -e SENDER_EMAIL=${{ secrets.SENDER_EMAIL }} \
+            -e PASSWORD=${{ secrets.PASSWORD }} \
+            us_stocks_robot
