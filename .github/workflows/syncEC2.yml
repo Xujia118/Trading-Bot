@@ -52,6 +52,6 @@ jobs:
 
             # Configure Git to trust this directory
             sudo git config --global --add safe.directory /home/ubuntu/Trading-Bot
-            
-            sudo git pull origin backup
+            sudo git checkout backup
+            sudo git pull origin backup 
           EOF
