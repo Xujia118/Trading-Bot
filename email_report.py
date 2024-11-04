@@ -12,6 +12,9 @@ def send_email():
     buy_plan = decide_candidates.decide_candidates() 
 
     # Email configuration
+    # sender_email = config.sender_email
+    # password = config.password
+
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = '773977192@qq.com'
     password = os.getenv("PASSWORD")
@@ -45,7 +48,7 @@ def send_email():
 
     with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
         server.login(sender_email, password)
-        # server.sendmail(sender_email, receiver_email, email_text)
+        server.sendmail(sender_email, receiver_email, email_text)
 
 if __name__ == '__main__':
     send_email()
