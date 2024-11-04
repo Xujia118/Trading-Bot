@@ -2,7 +2,7 @@ from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.trading.client import TradingClient
 from technical_analysis import TechnicalAnalysis
 import pandas as pd
-import config
+# import config
 import os
 
 # Cloud Environment
