@@ -16,7 +16,7 @@ jobs:
       - name: Shut down EC2 instance
         uses: appleboy/ssh-action@v0.1.9
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ env.EC2_HOST }} # env, not secret
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
