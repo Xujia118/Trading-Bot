@@ -3,7 +3,7 @@ name: Run and Shutdown EC2
 on:
   workflow_run:
     workflows: 
-      - Deploy to EC2 # workflow name, not file name!
+      - Deploy to EC2
       - Run Python Code 
     types:
       - completed
@@ -12,16 +12,22 @@ jobs:
   shutdown_ec2:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
-    environment: 
-      EC2_HOST: ${{ github.event.workflow_run.outputs.EC2_HOST }}
-
+    
     steps:
-      - name: Shut down EC2 instance
-        uses: appleboy/ssh-action@v0.1.9
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          host: ${{ env.EC2_HOST }} # env, not secret
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            sudo shutdown now
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-west-2
+
+      - name: Get EC2 instance ID from S3
+        run: | 
+            aws s3 cp s3://stocks-trading-robot-2024/ec2-instance-id.txt .
+            EC2_INSTANCE_ID=$(cat ec2-instance-id.txt)
+            echo "EC2_INSTANCE_ID=${EC2_INSTANCE_ID}" >> $GITHUB_ENV
+
+      - name: Shut down EC2 instance
+        run: |
+          aws ec2 stop-instances --instance-ids ${{ env.EC2_INSTANCE_ID }}
