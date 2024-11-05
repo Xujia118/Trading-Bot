@@ -38,6 +38,8 @@ jobs:
           aws ec2 start-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} 
           IP_ADDRESS=$(aws ec2 describe-instances --instance-ids ${{ env.EC2_INSTANCE_ID }} --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
           echo "EC2_HOST=$IP_ADDRESS" >> $GITHUB_ENV
+        outputs:
+          EC2_HOST: ${{ env.EC2_HOST }}
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3

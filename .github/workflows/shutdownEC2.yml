@@ -12,6 +12,10 @@ jobs:
   shutdown_ec2:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    environment: 
+      EC2_HOST: ${{ github.event.workflow_run.outputs.EC2_HOST }}
+
     steps:
       - name: Shut down EC2 instance
         uses: appleboy/ssh-action@v0.1.9
