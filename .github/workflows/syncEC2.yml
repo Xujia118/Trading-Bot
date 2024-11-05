@@ -25,7 +25,7 @@ jobs:
       - name: Retrieve EC2 instance ID from S3
         id: get-instance-id
         run: | 
-            aws s3 cp s3://stocks-trading-bucket-awsacademy/ec2-instance-id.txt .
+            aws s3 cp s3://stocks-trading-robot-2024/ec2-instance-id.txt .
             EC2_INSTANCE_ID=$(cat ec2-instance-id.txt)
             echo "EC2_INSTANCE_ID=${EC2_INSTANCE_ID}" >> $GITHUB_ENV
 
