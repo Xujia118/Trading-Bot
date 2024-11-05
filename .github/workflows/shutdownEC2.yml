@@ -3,8 +3,8 @@ name: Run and Shutdown EC2
 on:
   workflow_run:
     workflows: 
-      - syncEC2
-      - runPythonScript
+      - Deploy to EC2 # workflow name, not file name!
+      - Run Python Code 
     types:
       - completed
 
