@@ -54,57 +54,55 @@ def decide_positions_actions():
                                  num_positions)           
             if buy:
                 positions_buy.append(buy)
-
-    return positions_sell, positions_buy    
+    
+    return positions_sell, positions_buy
 
 pending_orders = get_latest_order_date.get_pending_orders()
 
 def sell_positions_stocks(ticker, holding_price, holding_quantity, cur_price):
-    # Not sell if profit target is not hit
+    # Exit sell if profit target is not met
     if cur_price < holding_price * (1 + parameters.profit_target): 
+        return
+
+    # Avoid repeating filing the same order as yesterday.
+    if ticker in pending_orders:
         return
     
     # Sell all if quantity is too small
     if holding_quantity <= 3:
-        place = Order(ticker, holding_quantity)
-
-        # Avoid repeating filing the same order as yesterday.
-        if ticker not in pending_orders:
-            place.sell_order()    
-            sell_result = (ticker, holding_quantity)
-            return sell_result
-    
-    # Sell in two operations
+        order = Order(ticker, holding_quantity)
+        order.sell_order()    
+        return ticker, holding_quantity
+        
+    # File to track selling state
     json_file = f'selling_{ticker}.json'
-    try:
-        with open(json_file, 'r') as file:
-            selling = json.load(file)
-    except FileNotFoundError:
-        selling = {}
+    selling_state = {}
 
-    if ticker not in selling:
-        # Sell half of holding quantity
-        sell_quantity = holding_quantity // 2
-        selling[ticker] = 1
-    else:      
-        sell_quantity = holding_quantity
-        del selling[ticker]
-        os.remove(json_file)
-
-    place = Order(ticker, sell_quantity)
-
-    # Avoid repeating filing the same order as yesterday.
-    if ticker in pending_orders:
-        return 
-
-    place.sell_order()  
-    sell_result = (ticker, sell_quantity)
-            
-    if selling:
-        with open(json_file, 'w') as file:
-            json.dump(selling, file)
+    # Load existing selling state if it exists
+    if os.path.exists(json_file):
+        try:
+            with open(json_file, 'r') as file:
+                selling_state = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
     
-    return sell_result
+    # Determine sell quantity based on selling state
+    if ticker not in selling_state:
+        # First: sell half
+        sell_quantity = holding_quantity // 2
+        selling_state[ticker] = 1
+        with open(json_file, 'w') as file:
+            json.dump(selling_state, file)
+    else:      
+        # Finaly: sell the rest
+        sell_quantity = holding_quantity
+        if os.path.exists(json_file):
+            os.remove(json_file)
+    
+    order = Order(ticker, sell_quantity)
+    order.sell_order()  
+
+    return ticker, sell_quantity
 
 def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, available_cash, num_positions):
     # Check if we are allowed to buy
@@ -123,4 +121,4 @@ def buy_positions_stocks(ticker, holding_price, holding_quantity, cur_price, ava
     buy_result = (ticker, buy_quantity)
     return buy_result
 
-# print(decide_positions_actions())
+print(decide_positions_actions())
