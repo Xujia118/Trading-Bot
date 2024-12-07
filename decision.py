@@ -1,16 +1,17 @@
 import pandas as pd
 import yfinance as yf
 from datetime import date
+import json
 import os
 
+from alpaca.trading.requests import GetOrdersRequest
+from alpaca.trading.enums import QueryOrderStatus
+
 from hub import tc, ta
-import scan_account
-import get_latest_order_date
 from order import Order
 import parameters
-import json
 
-from technical_analysis import TechnicalAnalysis
+# from technical_analysis import TechnicalAnalysis
 
 class Decision:
     def __init__(self):
@@ -47,7 +48,31 @@ class Decision:
         return positions_sell, positions_buy # For the report
 
     def screen_new_candidates(self):
-        pass
+        # Get positions information
+        self._scan_account()
+        holding_positions = self.portfolio["holding_positions"]
+
+        frame = pd.read_csv('candidates_Nasdaq.csv')
+
+        potential_buy = []
+        for ticker in frame['symbol']:
+            # For ticker in positions, we already did everything in scan_portfolio.
+            if ticker in holding_positions:
+                continue
+
+            # For other tickers, download data and run technical analysis for buy signals
+            try:
+                df = yf.download(ticker, start='2022-09-01')
+                print(f'Running technical analysis on {ticker}...')
+                ta.good_to_buy()
+
+                if df.iloc[-1]['good_to_buy'] == True:
+                    potential_buy.append((ticker, df.iloc[-1]['Close']))
+
+            except:
+                continue
+
+        return potential_buy
 
     def _generate_portfolio_df(self):
         '''
@@ -78,17 +103,22 @@ class Decision:
         holding_quantity = position["holding_quantity"]
         ticker = position["ticker"]
 
-        # Exit sell if profit target is not met
-        if current_price < holding_price * (1 + parameters.profit_target):
-            return
+        '''
+        Exit sell if profit target is not met or an order was fired yesterday 
+        to avoid early exit during consolidation
+        '''
+        pending_orders = self._get_pending_orders()
 
-        # Avoid repeating filing the same order as yesterday.
-        if ticker in pending_orders:
+        if (
+            current_price < holding_price * (1 + parameters.profit_target) or \
+            ticker in pending_orders
+        ):
             return
+        
+        order = Order(ticker, holding_quantity)
 
         # Sell all if quantity is too small
         if holding_quantity <= 3:
-            order = Order(ticker, holding_quantity)
             order.sell_order()
             return ticker, holding_quantity
 
@@ -117,13 +147,67 @@ class Decision:
             if os.path.exists(json_file):
                 os.remove(json_file)
 
-        order = Order(ticker, sell_quantity)
         order.sell_order()
 
         return ticker, sell_quantity
 
-    def _buy_portfolio_stocks(self):
-        pass
+    def _buy_portfolio_stocks(self, position):
+        current_price = position["current_price"]
+        holding_price = position["holding_price"]
+        holding_quantity = position["holding_quantity"]
+        ticker = position["ticker"]
+        available_cash = position["available_cash"]
+
+        # Check if we are allowed to buy
+        if (
+            available_cash / parameters.total_equity < parameters.invest_ratio or \
+            current_price > holding_price * parameters.rebuy_tolerance # num_positions >= 3: not to use it for more frequent testing
+        ):
+            return
+
+        buy_quantity = holding_quantity * 2
+        order = Order(ticker, buy_quantity)
+
+        # Avoid repeating filing the same order as yesterday.
+        pending_orders = self._get_pending_orders()
+
+        if ticker not in pending_orders:
+            order.buy_order()
+
+        return ticker, buy_quantity
+    
+    def _get_pending_orders(self):
+        # Get pending orders
+        open_orders = GetOrdersRequest(status=QueryOrderStatus.OPEN)
+
+        # Pending_orders is a list. A class object is at index 0 in this list.
+        pending_orders = tc.get_orders(filter=open_orders)
+
+        if not pending_orders:
+            return {}
+
+        result = {}
+        for order in pending_orders:
+            ticker = order.symbol
+            quantity = order.qty
+            if ticker not in result:
+                result[ticker] = 0
+            result[ticker] = quantity
+
+        return result
+
+    def _get_latest_order_date(self):
+        all_orders = GetOrdersRequest(status=QueryOrderStatus.ALL)
+        orders = tc.get_orders(filter=all_orders)
+
+        order_date = {}
+        for order in orders:
+            if order.filled_at:
+                filled_date = pd.Timestamp(order.filled_at).date()
+                if order.symbol not in order_date or filled_date > order_date[order.symbol]:
+                    order_date[order.symbol] = filled_date
+
+        return order_date
 
     def _run_techincal_analysis(self):
         holding_positions = self.account["holding_positions"]
@@ -146,9 +230,6 @@ class Decision:
                 analysis_result[ticker] = (None, close_price)
 
         return analysis_result
-    
-    def _scan_candidates(self):
-        pass
 
     def _scan_account(self):
         # Fetch account data api once and get cash and equity
@@ -176,11 +257,3 @@ class Decision:
             "available_cash": available_cash,
             "total_equity": total_equity
         }
-
-
-
-if __name__ == "__main__":
-    decision = Decision()
-    # decision.scan_account()
-
-

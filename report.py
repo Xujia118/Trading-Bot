@@ -1,10 +1,9 @@
 import smtplib
-import decide_positions
-import decide_candidates
 from datetime import date
-import os
 import config
+import os
 
+from decision import Decision
 
 class Report:
     def __init__(self):
@@ -40,8 +39,9 @@ class Report:
 
     def _compose_email(self):
         # Call functions to get plans for positions and other stocks
-        positions_sell, positions_buy = decide_positions.decide_positions_actions()
-        buy_plan = decide_candidates.decide_candidates()
+        decision = Decision()
+        positions_sell, positions_buy = decision.update_portfolio()
+        buy_plan = decision.screen_new_candidates()
 
         # sender_email = os.getenv("SENDER_EMAIL")
         # receiver_email = '773977192@qq.com'
