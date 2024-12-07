@@ -1,0 +1,20 @@
+name: Run Code at 4 PM Monday-Friday
+
+on:
+  schedule:
+    # Runs at 4 PM UTC Monday through Friday
+    - cron: '0 16 * * 1-5'
+
+jobs:
+  run-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Run your script
+      - name: Run the script
+        run: |
+          python your_script.py

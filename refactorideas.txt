@@ -3,12 +3,12 @@ The logic is too aggressive at buying low. But when the market is bearish, there
 that prompt the algorithm to buy.
 We can complement technical analysis with ML.
 
-Group by tasks:
-establish stocks bases
-run technical analysis (including test)
-decide trading actions
-place order
-report
+Classes:
+Data
+Analysis
+Action
+Order
+Report
 
 Integrate ML: to be included in technical analysis
 1. can we buy this stock?
