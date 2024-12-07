@@ -1,0 +1,35 @@
+name: Autorun Containers
+
+on:
+  workflow_dispatch:  
+
+jobs:
+  deploy-start-containers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+        # The following part is not yet correct. 
+        # We need to configure AWS credetials
+        # And we might want to to configuratin in a separate file.
+
+      - name: Set up SSH keys and environment variables
+        env:
+          EC2_HOST: ${{ env.EC2_HOST }}
+          EC2_USER: "ubuntu"
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_KEY }}
+
+
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy start-containers.sh and configure EC2 reboot
+        run: ./.github/workflows/deploy-start-containers.sh
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: "ubuntu"
