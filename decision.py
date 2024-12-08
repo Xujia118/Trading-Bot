@@ -35,12 +35,12 @@ class Decision:
                 "action": self.portfolio_df['Action'].iloc[i],
             }
 
-            if position['Action'].iloc[i] == "Sell":
+            if self.portfolio_df['Action'].iloc[i] == "Sell":
                 sell = self._sell_portfolio_stocks(position)
                 if sell:
                     positions_sell.append(sell)
 
-            if position['Action'].iloc[i] == "Buy":
+            if self.portfolio_df['Action'].iloc[i] == "Buy":
                 buy = self._buy_portfolio_stocks(position, available_cash, num_positions)
                 if buy:
                     positions_buy.append(buy)
@@ -68,7 +68,6 @@ class Decision:
 
                 if df.iloc[-1]['good_to_buy'] == True:
                     potential_buy.append((ticker, df.iloc[-1]['Close']))
-
             except:
                 continue
 
@@ -209,8 +208,7 @@ class Decision:
 
         return order_date
 
-    def _run_techincal_analysis(self):
-        holding_positions = self.account["holding_positions"]
+    def _run_techincal_analysis(self, holding_positions):
         analysis_result = {}
 
         for ticker in holding_positions:

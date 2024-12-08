@@ -78,8 +78,4 @@ class Report:
 
         email_text = f'Subject: Stocks Report\n\n{email_text}'
         return email_text
-
-
-if __name__ == '__main__':
-    report = Report()
-    report.send_email()
+    
