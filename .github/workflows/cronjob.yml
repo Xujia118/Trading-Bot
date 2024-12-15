@@ -3,7 +3,7 @@ name: Run Code at 4 PM Monday-Friday
 on:
   schedule:
     # Runs at 4 PM UTC Monday through Friday
-    - cron: '0 16 * * 1-5'
+    - cron: '0 0 * * 2-6'
 
 jobs:
   run-code:
@@ -17,4 +17,4 @@ jobs:
       # Step 2: Run your script
       - name: Run the script
         run: |
-          python your_script.py
+          python main.py
