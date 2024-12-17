@@ -10,11 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Run your script
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          python -m venv myenv
+          source myenv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Run the script
         run: |
+          source myenv/bin/activate
           python main.py

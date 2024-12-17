@@ -1,6 +1,6 @@
 import smtplib
 from datetime import date
-import config
+# import config
 import os
 
 from decision import Decision
@@ -14,9 +14,13 @@ class Report:
         print(email_text)
 
         # Email configuration
-        sender_email = config.sender_email
-        password = config.password
+        sender_email = os.getenv("SENDER_EMAIL")
         receiver_email = '773977192@qq.com'
+        password = os.getenv("PASSWORD")
+
+        # sender_email = config.sender_email
+        # password = config.password
+        # receiver_email = '773977192@qq.com'
 
         # Send email
         with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
@@ -42,10 +46,6 @@ class Report:
         decision = Decision()
         positions_sell, positions_buy = decision.update_portfolio()
         buy_plan = decision.screen_new_candidates()
-
-        # sender_email = os.getenv("SENDER_EMAIL")
-        # receiver_email = '773977192@qq.com'
-        # password = os.getenv("PASSWORD")
 
         # Formatting the report
         if len(positions_sell) == 0:
