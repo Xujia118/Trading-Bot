@@ -21,8 +21,6 @@ class Decision:
 
     def update_portfolio(self):
         self._generate_portfolio_df()
-        available_cash = self.portfolio["available_cash"]
-        num_positions = self.portfolio["num_positions"]
 
         positions_sell, positions_buy = [], []
 
@@ -151,11 +149,14 @@ class Decision:
         return ticker, sell_quantity
 
     def _buy_portfolio_stocks(self, position):
+        # Info of a ticker
         current_price = position["current_price"]
         holding_price = position["holding_price"]
         holding_quantity = position["holding_quantity"]
         ticker = position["ticker"]
-        available_cash = position["available_cash"]
+
+        # Info of the account
+        available_cash = self.portfolio["available_cash"]
 
         # Check if we are allowed to buy
         if (
