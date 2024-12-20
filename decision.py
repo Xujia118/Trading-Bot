@@ -41,7 +41,7 @@ class Decision:
                     positions_sell.append(sell)
 
             if self.portfolio_df['Action'].iloc[i] == "Buy":
-                buy = self._buy_portfolio_stocks(position, available_cash, num_positions)
+                buy = self._buy_portfolio_stocks(position)
                 if buy:
                     positions_buy.append(buy)
 
