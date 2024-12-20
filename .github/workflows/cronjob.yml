@@ -4,6 +4,7 @@ on:
   schedule:
     # Runs at 4 PM UTC Monday through Friday
     - cron: '0 0 * * 2-6'
+  workflow_dispatch:
 
 jobs:
   run-code:
