@@ -1,6 +1,7 @@
 import smtplib
 from datetime import date
 # import config
+import pandas as pd
 import os
 
 from decision import Decision
@@ -10,22 +11,30 @@ class Report:
         self.email_content = None
 
     def send_email(self):
-        email_text = self._compose_email()
-        print(email_text)
+        # As a temparoray measure, set up frames here. 
+        # Ideally, frames should come from a separate source,
+        # i.e., a refactored stocks_data.py 
+        us_stocks = pd.read_csv('candidates_Nasdaq.csv')
+        cn_stocks = pd.read_csv('candidates_CSI300.csv')
+        frames = [us_stocks, cn_stocks]
 
-        # Email configuration
-        sender_email = os.getenv("SENDER_EMAIL")
-        receiver_email = '773977192@qq.com'
-        password = os.getenv("PASSWORD")
+        for frame in frames:
+            email_text = self._compose_email(frame)
+            print(email_text)
 
-        # sender_email = config.sender_email
-        # password = config.password
-        # receiver_email = '773977192@qq.com'
+            # Email configuration
+            sender_email = os.getenv("SENDER_EMAIL")
+            receiver_email = '773977192@qq.com'
+            password = os.getenv("PASSWORD")
 
-        # Send email
-        with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, email_text)
+            # sender_email = config.sender_email
+            # password = config.password
+            # receiver_email = '773977192@qq.com'
+
+            # Send email
+            with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, email_text)
 
     def _format_email(self):
         self.email_content = '''
@@ -41,11 +50,11 @@ class Report:
         {date}
         '''
 
-    def _compose_email(self):
+    def _compose_email(self, frame):
         # Call functions to get plans for positions and other stocks
         decision = Decision()
         positions_sell, positions_buy = decision.update_portfolio()
-        buy_plan = decision.screen_new_candidates()
+        buy_plan = decision.screen_new_candidates(frame)
 
         # Formatting the report
         if len(positions_sell) == 0:

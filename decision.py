@@ -45,13 +45,11 @@ class Decision:
 
         return positions_sell, positions_buy # For the report
 
-    def screen_new_candidates(self):
+    def screen_new_candidates(self, frame):
         # Get positions information
         self._scan_account()
         holding_positions = self.portfolio["holding_positions"]
-
-        frame = pd.read_csv('candidates_Nasdaq.csv')
-
+        
         potential_buy = []
         for ticker in frame['symbol']:
             # For ticker in positions, we already did everything in scan_portfolio.
