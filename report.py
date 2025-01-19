@@ -1,8 +1,10 @@
 import smtplib
 from datetime import date
-# import config
 import pandas as pd
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from decision import Decision
 
@@ -15,8 +17,13 @@ class Report:
         # Ideally, frames should come from a separate source,
         # i.e., a refactored stocks_data.py 
         us_stocks = pd.read_csv('candidates_Nasdaq.csv')
-        cn_stocks = pd.read_csv('candidates_CSI300.csv')
-        frames = [us_stocks, cn_stocks]
+        # cn_stocks = pd.read_csv('candidates_CSI300.csv')
+        # frames = [us_stocks, cn_stocks] 
+        '''
+        CN stocks are not in the account, so orders on them will never be placed.
+        '''
+        
+        frames = [us_stocks]
 
         for frame in frames:
             email_text = self._compose_email(frame)
@@ -26,10 +33,6 @@ class Report:
             sender_email = os.getenv("SENDER_EMAIL")
             receiver_email = '773977192@qq.com'
             password = os.getenv("PASSWORD")
-
-            # sender_email = config.sender_email
-            # password = config.password
-            # receiver_email = '773977192@qq.com'
 
             # Send email
             with smtplib.SMTP_SSL('smtp.163.com', 465) as server:
