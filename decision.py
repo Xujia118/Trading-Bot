@@ -15,7 +15,6 @@ import parameters
 
 class Decision:
     def __init__(self):
-        # self.ta = TechnicalAnalysis(None)
         self.portfolio = {}
         self.portfolio_df = None
 
@@ -212,8 +211,8 @@ class Decision:
 
         for ticker in holding_positions:
             df = yf.download(ticker, start='2022-01-01')
-            print(f'Running technical analysis on {ticker}...')
             ta.set_df(df)
+            print(f'Running technical analysis on {ticker}...')
             ta.good_to_buy()
             ta.good_to_sell()
 
