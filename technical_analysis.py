@@ -10,8 +10,14 @@ class TechnicalAnalysis:
         self.consolidation_tolerance = parameters.consolidation_tolerance
         self.SMA_tolerance = parameters.SMA_tolerance
     
+    '''
+    This set_df method is necessary because when we instantiate ta object,
+    we don't have df yet, so we pass None. 
+    When we get a df, we then have to pass it in and set it
+    '''
     def set_df(self, df):
         self.df = df
+        self.df.columns = self.df.columns.droplevel(1)
 
     def SMA60(self): 
         # forbid buying if price is above SMA60

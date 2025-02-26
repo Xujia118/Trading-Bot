@@ -7,8 +7,8 @@ from hub import ta
 start_date = '2022-01-01'
 start_date = pd.to_datetime(start_date)
 df = yf.download('AMZN', start='2020-01-01')
-
-# df = get_tickcer_data('AMZN', '2020-01-01')
+df.columns = df.columns.droplevel(1)
+ta.set_df(df)
 
 # ta.Bollinger() 
 # plt.plot(df[['Close', 'SMA20', 'Upper', 'Lower']])
@@ -29,7 +29,6 @@ df = yf.download('AMZN', start='2020-01-01')
 # my_date = '2021-10-13'
 # print(df['Small_candle'].loc[my_date])
 # print(df['Bullish_engulf'].loc[my_date])
-ta.set_df(df)
 ta.good_to_buy()
 ta.good_to_sell()
 
